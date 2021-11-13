@@ -72,6 +72,7 @@ trait DataLoader {
           .stripPrefix("<")
           .stripSuffix(">")
           .split("><")
+          .filter(_.nonEmpty)
           .toSeq
       )
     }
