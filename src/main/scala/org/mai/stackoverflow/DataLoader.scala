@@ -140,7 +140,7 @@ trait DataLoader {
   }
 
   private[this] def matchInt(s: String): Int = {
-    val intMatch = "(\\d+)".r
+    val intMatch = "(-?\\d+)".r
     s match {
       case intMatch(i) => i.toInt
       case _ => Int.MinValue
