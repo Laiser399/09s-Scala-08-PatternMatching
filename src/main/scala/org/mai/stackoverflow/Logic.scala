@@ -72,12 +72,27 @@ object Logic {
 
   //find all links (like http://example.com/examplePage) in aboutMe field
   def findAllUserLinks(users: Seq[User]): Seq[(User, Seq[String])] = {
-    Seq[(User, Seq[String])]()
+    val urlRegex = "https?://(\\w+\\.)?\\w+\\.\\w+(/\\w+)*/?".r
+
+    users.map(u => {
+      val matches = urlRegex.findAllMatchIn(u.about)
+      (u, matches.map(_.group(0)).toSeq)
+    })
   }
 
-  //find all users with the reputation bigger then reputationLImit with particular badge
-  def findTopUsersByBadge(users: Seq[User], basges: Seq[Badge], badgeName: String, reputationLimit: Int): Seq[User] = {
-    Seq()
+  //find all users with the reputation bigger then reputationLimit with particular badge
+  def findTopUsersByBadge(users: Seq[User], badges: Seq[Badge], badgeName: String, reputationLimit: Int): Seq[User] = {
+    val usersById = users.map(u => u.id -> u).toMap
+
+    badges
+      .collect {
+        case badge if badge.name == badgeName => badge.userId
+      }
+      .distinct
+      .collect {
+        case userId if usersById.contains(userId) => usersById(userId)
+      }
+      .filter(_.reputation > reputationLimit)
   }
 }
 
