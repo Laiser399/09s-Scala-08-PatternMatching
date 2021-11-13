@@ -62,18 +62,21 @@ object Logic {
   def findTopUsersByBadge(users: Seq[User], basges: Seq[Badge], badgeName: String, reputationLimit: Int): Seq[User] = {
     Seq()
   }
-
 }
 
-case class EnreachedPost(
-                          post: Post,
-                          owner: User,
-                          lastEditor: User,
-                          tags: Seq[Tag]
-                        )
+case class EnrichedPost(
+                         post: Post,
+                         owner: User,
+                         lastEditor: Option[User],
+                         tags: Seq[Tag]
+                       ) {
+  override lazy val toString: String =
+    s"EnrichedPost(PostId=${post.id}, OwnerName=${owner.displayName}, " +
+      s"LastEditorName=${lastEditor.map(_.displayName)}, Tags=${tags.map(_.id)})"
+}
 
-case class EnreachedComment(
-                             comment: Comment,
-                             post: Post,
-                             owner: User
-                           )
+case class EnrichedComment(
+                            comment: Comment,
+                            post: Post,
+                            owner: User
+                          )
