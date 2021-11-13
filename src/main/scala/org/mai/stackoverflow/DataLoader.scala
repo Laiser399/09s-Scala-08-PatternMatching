@@ -68,7 +68,11 @@ trait DataLoader {
         parseDate(postRow \@ "CreationDate"),
         parseDate(postRow \@ "LastEditDate"),
         parseDate(postRow \@ "LastActivityDate"),
-        (postRow \@ "Tags").stripPrefix("&lt;").stripSuffix("&gt;").split("&gt;&lt;").toSeq
+        (postRow \@ "Tags")
+          .stripPrefix("<")
+          .stripSuffix(">")
+          .split("><")
+          .toSeq
       )
     }
   }
