@@ -44,8 +44,17 @@ object Logic {
   }
 
   //populate fields owner, lastEditor, tags with particular users from Seq[Post] and tags from Seq[Tag]
-  def enreachPosts(posts: Seq[Post], users: Seq[User], tags: Seq[Tag]): Seq[EnreachedPost] = {
-    Seq()
+  def enrichPosts(posts: Seq[Post], users: Seq[User], tags: Seq[Tag]): Seq[EnrichedPost] = {
+    val usersById = users.map(u => u.id -> u).toMap
+    val tagsByName = tags.map(t => t.tagName -> t).toMap
+
+    posts.collect {
+      case post if
+        usersById.contains(post.ownerUserId)
+          && post.lastEditorUserId.forall(usersById.contains)
+          && post.tags.forall(tagsByName.contains) =>
+        EnrichedPost(post, usersById(post.ownerUserId), post.lastEditorUserId.map(usersById), post.tags.map(tagsByName))
+    }
   }
 
   //populate fields post and owner with particular post from Seq[Post] and user from Seq[User]
