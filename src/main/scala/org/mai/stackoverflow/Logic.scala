@@ -10,9 +10,37 @@ object Logic {
       }
   }
 
+  // 49 ms
   //split entities by type
   def splitEntities(entities: Seq[Entity]): (Seq[User], Seq[Post], Seq[Comment], Seq[Vote], Seq[Badge], Seq[Tag]) = {
-    (Seq(), Seq(), Seq(), Seq(), Seq(), Seq())
+    val grouped = entities.groupBy(_.getClass)
+
+    val users = grouped.getOrElse(classOf[User], Seq()).map(_.asInstanceOf[User])
+    val posts = grouped.getOrElse(classOf[Post], Seq()).map(_.asInstanceOf[Post])
+    val comments = grouped.getOrElse(classOf[Comment], Seq()).map(_.asInstanceOf[Comment])
+    val votes = grouped.getOrElse(classOf[Vote], Seq()).map(_.asInstanceOf[Vote])
+    val badges = grouped.getOrElse(classOf[Badge], Seq()).map(_.asInstanceOf[Badge])
+    val tags = grouped.getOrElse(classOf[Tag], Seq()).map(_.asInstanceOf[Tag])
+
+    (users, posts, comments, votes, badges, tags)
+  }
+
+  // 4729 ms
+  def splitEntities2(entities: Seq[Entity]): (Seq[User], Seq[Post], Seq[Comment], Seq[Vote], Seq[Badge], Seq[Tag]) = {
+    val initAcc = Tuple6[Seq[User], Seq[Post], Seq[Comment], Seq[Vote], Seq[Badge], Seq[Tag]](
+      Seq[User](), Seq[Post](), Seq[Comment](), Seq[Vote](), Seq[Badge](), Seq[Tag]())
+
+    entities
+      .foldLeft(initAcc)((acc, entity) => {
+        entity match {
+          case u: User => acc.copy(_1 = acc._1 :+ u)
+          case p: Post => acc.copy(_2 = acc._2 :+ p)
+          case c: Comment => acc.copy(_3 = acc._3 :+ c)
+          case v: Vote => acc.copy(_4 = acc._4 :+ v)
+          case b: Badge => acc.copy(_5 = acc._5 :+ b)
+          case t: Tag => acc.copy(_6 = acc._6 :+ t)
+        }
+      })
   }
 
   //populate fields owner, lastEditor, tags with particular users from Seq[Post] and tags from Seq[Tag]
