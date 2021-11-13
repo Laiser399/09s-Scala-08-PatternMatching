@@ -79,4 +79,7 @@ case class EnrichedComment(
                             comment: Comment,
                             post: Post,
                             owner: User
-                          )
+                          ) {
+  override lazy val toString: String = s"EnrichedComment(CommentId=${comment.id}, " +
+    s"PostTitle=${post.title}, OwnerName=${owner.displayName})"
+}

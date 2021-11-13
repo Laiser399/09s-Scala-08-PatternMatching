@@ -13,15 +13,23 @@ object Main extends App {
 
   val (users, posts, comments, votes, badges, tags) = Logic.splitEntities(entities)
 
-  val reachPosts = Logic.enreachPosts(posts, users, tags);
+  val reachPosts = Logic.enrichPosts(posts, users, tags);
+  println
   reachPosts take(10) foreach println
 
-  val reachComments = Logic.enreachComments(comments, posts, users)
+  val reachComments = Logic.enrichComments(comments, posts, users)
+  println
   reachComments take(10) foreach println
 
   val userLinks = Logic.findAllUserLinks(users)
-  userLinks take(10) foreach println
+  println
+  userLinks
+    .take(10)
+    .foreach(x => println(s"${x._1.id} -> ${x._2.toList}"))
 
   val topUsersByBadge = Logic.findTopUsersByBadge(users, badges, "Student", 100)
-  topUsersByBadge take(10) foreach println
+  println
+  topUsersByBadge
+    .take(10)
+    .foreach(u => println(s"Id=${u.id}, Name=${u.displayName}, Rep=${u.reputation}"))
 }
