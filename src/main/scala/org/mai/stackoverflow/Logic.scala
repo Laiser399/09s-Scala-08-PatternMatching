@@ -4,7 +4,10 @@ object Logic {
 
   //obtain all comments from entities
   def getComments(entities: Seq[Entity]): Seq[Comment] = {
-    Seq()
+    entities
+      .collect {
+        case e: Comment => e
+      }
   }
 
   //split entities by type
