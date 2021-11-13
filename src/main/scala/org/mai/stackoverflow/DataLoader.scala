@@ -63,7 +63,10 @@ trait DataLoader {
         matchInt(postRow \@ "AnswerCount"),
         matchInt(postRow \@ "CommentCount"),
         matchInt(postRow \@ "OwnerUserId"),
-        matchInt(postRow \@ "LastEditorUserId"),
+        postRow \@ "LastEditorUserId" match {
+          case userId if userId.nonEmpty => Some(matchInt(userId))
+          case _ => None
+        },
         matchInt(postRow \@ "AcceptedAnswerId"),
         parseDate(postRow \@ "CreationDate"),
         parseDate(postRow \@ "LastEditDate"),
@@ -179,7 +182,7 @@ case class Post(
                answerCount: Int,
                commentCount: Int,
                ownerUserId: Int,
-               lastEditorUserId: Int,
+               lastEditorUserId: Option[Int],
                acceptedAnswerId: Int,
                creationDate: LocalDateTime,
                lastEditDate: LocalDateTime,
