@@ -58,8 +58,16 @@ object Logic {
   }
 
   //populate fields post and owner with particular post from Seq[Post] and user from Seq[User]
-  def enreachComments(comments: Seq[Comment], posts: Seq[Post], users: Seq[User]): Seq[EnreachedComment] = {
-    Seq()
+  def enrichComments(comments: Seq[Comment], posts: Seq[Post], users: Seq[User]): Seq[EnrichedComment] = {
+    val postsById = posts.map(p => p.id -> p).toMap
+    val usersById = users.map(u => u.id -> u).toMap
+
+    comments.collect {
+      case comment if
+        postsById.contains(comment.postId)
+          && usersById.contains(comment.userId) =>
+        EnrichedComment(comment, postsById(comment.postId), usersById(comment.userId))
+    }
   }
 
   //find all links (like http://example.com/examplePage) in aboutMe field
